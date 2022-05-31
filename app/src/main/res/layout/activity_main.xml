@@ -6,16 +6,16 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <com.yandex.mapkit.mapview.MapView
-            android:id="@+id/mapview"
+    <androidx.fragment.app.FragmentContainerView
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <Button
-                android:text="Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button" />
-    </com.yandex.mapkit.mapview.MapView>
+            android:layout_height="match_parent"
+            app:navGraph="@navigation/nav_root"
+            app:defaultNavHost="true"
+            android:id="@+id/fragmentContainerView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
