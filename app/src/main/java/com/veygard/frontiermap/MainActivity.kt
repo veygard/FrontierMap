@@ -15,17 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey("20efb660-3a81-4715-89e4-5d366f2551a7");
-        MapKitFactory.initialize(this);
         setContentView(R.layout.activity_main)
     }
 
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-    }
-    override fun onStop() {
-        super.onStop()
-        MapKitFactory.getInstance().onStop()
-    }
 }
