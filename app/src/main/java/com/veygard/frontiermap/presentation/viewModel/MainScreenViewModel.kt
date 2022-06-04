@@ -1,7 +1,10 @@
 package com.veygard.frontiermap.presentation.viewModel
 
 import android.graphics.Color
+import android.graphics.Point
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.veygard.frontiermap.domain.models.PolygonRaw
@@ -15,11 +18,17 @@ import org.osmdroid.views.overlay.Polygon
 
 class MainScreenViewModel(private val geoRepository: GeoRepository) : ViewModel() {
 
+//    private val perimeterLength = 0.0
+//    private var lаstPoint: Point =
+    private val _isLoading = MutableLiveData<Boolean?>()
+    val isLoading: LiveData<Boolean?>
+        get() = _isLoading
+
     fun getRussia(map: MapView) {
         viewModelScope.launch {
+            _isLoading.value = true
 
-            val result = geoRepository.getRussia()
-            when (result) {
+            when (val result = geoRepository.getRussia()) {
                 is RepoResult.Success -> {
                     result.result.forEach { multiPolygon ->
                         try {
@@ -32,6 +41,7 @@ class MainScreenViewModel(private val geoRepository: GeoRepository) : ViewModel(
                         }
                     }
                     map.invalidate()
+                    _isLoading.value = false
                 }
             }
         }
