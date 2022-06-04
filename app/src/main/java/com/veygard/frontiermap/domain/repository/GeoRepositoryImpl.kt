@@ -27,7 +27,7 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
                                 multi.forEach { polygon ->
                                     val listOfPoints = mutableListOf<Point>()
                                     polygon.forEach { point->
-                                        val reversePoint = Point(point.last(), point.first())
+                                        val reversePoint = Point(point.last(), if(point.first() > 180.0) 180.0 else point.first())
                                         listOfPoints.add(reversePoint)
                                     }
                                     val newPolygon = Polygon(listOfPoints)

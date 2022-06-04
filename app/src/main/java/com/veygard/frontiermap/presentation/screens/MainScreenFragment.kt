@@ -46,33 +46,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         viewModel.getRussia(binding.mapView)
         map = binding.mapView
 
-//        map.controller.setZoom(10.2)
-//        map.setMultiTouchControls(true)
-//
-//
-//        val compassOverlay = CompassOverlay(requireContext(), map)
-//        compassOverlay.enableCompass()
-//        map.overlays.add(compassOverlay)
-//
-//        val point = GeoPoint(42.845404364, 132.44898522200018)
-//
-//        val startMarker = Marker(map)
-//        startMarker.position = point
-//        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-//        map.overlays.add(startMarker)
-//
-//        map.controller.setCenter(point)
 
-        map.controller.setZoom(10.2)
+        map.controller.setZoom(4.5)
         map.setMultiTouchControls(true)
 
-        val point = GeoPoint(54.63743724200005, 136.65894616000017)
-
-        val startMarker = Marker(map)
-        startMarker.position = point
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        map.overlays.add(startMarker)
-
+        val point = GeoPoint(55.558741, 37.378847 )
         map.controller.setCenter(point)
 
 
