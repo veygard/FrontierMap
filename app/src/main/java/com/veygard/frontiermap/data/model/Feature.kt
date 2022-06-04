@@ -1,4 +1,4 @@
-package com.veygard.frontiermap.domain.models
+package com.veygard.frontiermap.data.model
 
 data class Feature(
     val geometry: Geometry,

@@ -1,7 +1,7 @@
 package com.veygard.frontiermap.domain.repository
 
-import org.json.JSONObject
+import com.veygard.frontiermap.data.model.GeoApiResponse
 
 interface GeoRepository {
-    suspend fun getRussia(): JSONObject?
+    suspend fun getRussia(): RepoResult
 }

@@ -1,5 +1,6 @@
 package com.veygard.frontiermap.presentation.screens
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +14,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.bonuspack.kml.KmlDocument
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.FolderOverlay
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.compass.CompassOverlay
 import java.io.File
+import java.io.IOException
+import java.io.InputStream
 
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
@@ -41,15 +46,27 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         viewModel.getRussia(binding.mapView)
         map = binding.mapView
 
+//        map.controller.setZoom(10.2)
+//        map.setMultiTouchControls(true)
+//
+//
+//        val compassOverlay = CompassOverlay(requireContext(), map)
+//        compassOverlay.enableCompass()
+//        map.overlays.add(compassOverlay)
+//
+//        val point = GeoPoint(42.845404364, 132.44898522200018)
+//
+//        val startMarker = Marker(map)
+//        startMarker.position = point
+//        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+//        map.overlays.add(startMarker)
+//
+//        map.controller.setCenter(point)
+
         map.controller.setZoom(10.2)
         map.setMultiTouchControls(true)
 
-
-        val compassOverlay = CompassOverlay(requireContext(), map)
-        compassOverlay.enableCompass()
-        map.overlays.add(compassOverlay)
-
-        val point = GeoPoint(42.845404364, 132.44898522200018)
+        val point = GeoPoint(54.63743724200005, 136.65894616000017)
 
         val startMarker = Marker(map)
         startMarker.position = point
@@ -58,16 +75,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
         map.controller.setCenter(point)
 
-        val kmlDocument = KmlDocument()
-        val localFile: File = kmlDocument.getDefaultPathForAndroid(requireContext(),"rus.json")
-        kmlDocument.saveAsGeoJSON(localFile)
-        val overlay = kmlDocument.mKmlRoot.buildOverlay(map, null, null, kmlDocument)
-        map.overlays.add(overlay)
-        map.invalidate()
 
-        val bb = kmlDocument.mKmlRoot.boundingBox
-        map.zoomToBoundingBox(bb, true)
-        map.controller.setCenter(bb.center);
+
     }
 
     override fun onStart() {
