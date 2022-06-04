@@ -2,11 +2,9 @@ package com.veygard.frontiermap.domain.repository
 
 import android.util.Log
 import com.veygard.frontiermap.data.GeoApi
-import com.veygard.frontiermap.data.model.GeoApiResponse
-import com.veygard.frontiermap.domain.models.GeoCluster
-import com.veygard.frontiermap.domain.models.MultiPolygon
-import com.veygard.frontiermap.domain.models.Point
-import com.veygard.frontiermap.domain.models.Polygon
+import com.veygard.frontiermap.domain.models.MultiPolygonRaw
+import com.veygard.frontiermap.domain.models.PointRaw
+import com.veygard.frontiermap.domain.models.PolygonRaw
 
 
 class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
@@ -19,19 +17,19 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
             result = when {
                 call.isSuccessful -> {
                     call.body()?.let { api->
-                        val listOfMultiPolygon = mutableListOf<MultiPolygon>()
+                        val listOfMultiPolygon = mutableListOf<MultiPolygonRaw>()
 
                         api.features.forEach { cluster->
                             cluster.geometry.coordinates.forEach { multi->
-                                val multiPolygon = MultiPolygon(mutableListOf())
+                                val multiPolygon = MultiPolygonRaw(mutableListOf())
                                 multi.forEach { polygon ->
-                                    val listOfPoints = mutableListOf<Point>()
+                                    val listOfPoints = mutableListOf<PointRaw>()
                                     polygon.forEach { point->
-                                        val reversePoint = Point(point.last(), if(point.first() > 180.0) 180.0 else point.first())
+                                        val reversePoint = PointRaw(point.last(), if(point.first() > 180.0) 180.0 else point.first())
                                         listOfPoints.add(reversePoint)
                                     }
-                                    val newPolygon = Polygon(listOfPoints)
-                                    multiPolygon.polygons.add(newPolygon)
+                                    val newPolygon = PolygonRaw(listOfPoints)
+                                    multiPolygon.polygonRaws.add(newPolygon)
                                 }
                                 listOfMultiPolygon.add(multiPolygon)
                             }

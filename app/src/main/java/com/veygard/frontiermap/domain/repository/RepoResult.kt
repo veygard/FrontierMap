@@ -1,10 +1,9 @@
 package com.veygard.frontiermap.domain.repository
 
-import com.veygard.frontiermap.data.model.GeoApiResponse
-import com.veygard.frontiermap.domain.models.MultiPolygon
+import com.veygard.frontiermap.domain.models.MultiPolygonRaw
 
 sealed class RepoResult {
-    data class Success(val result: List<MultiPolygon>): RepoResult()
+    data class Success(val result: List<MultiPolygonRaw>): RepoResult()
     object Error: RepoResult()
     object Connection: RepoResult()
     object Server: RepoResult()
