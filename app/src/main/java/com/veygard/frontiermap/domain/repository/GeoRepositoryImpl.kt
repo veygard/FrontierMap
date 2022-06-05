@@ -6,14 +6,12 @@ import android.util.Log
 import com.veygard.frontiermap.data.GeoApi
 import com.veygard.frontiermap.domain.models.GeoCluster
 import com.veygard.frontiermap.domain.models.MultiPolygon
-import com.veygard.frontiermap.presentation.widgets.CustomTapPolygon
+import com.veygard.frontiermap.presentation.widgets.CustomPolygon
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Polygon
 
 
 class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
-    private var getRussiaPerimeter = 0.0
-    private var lastLocation: Location? = null
 
     override suspend fun getRussia(): RepoResult {
         var result: RepoResult
@@ -26,31 +24,41 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
                     call.body()?.let { api->
                         val listOfGeoClusters = mutableListOf<GeoCluster>()
                         var perimeterLength = 0f
+                        var perimeterLengthAuto = 0.0
                         var lastPoint: GeoPoint? = null
+                        val polygonList = mutableListOf<Polygon>()
 
                         api.features.forEach { cluster->
                             val listOfMultiPolygon = mutableListOf<MultiPolygon>()
                             cluster.geometry.coordinates.forEach { multi->
                                 val multiPolygon = MultiPolygon(mutableListOf())
                                 multi.forEach { polygon ->
-                                    val listOfPoints = mutableListOf<GeoPoint>()
+                                    var polygonDistance = 0f
+                                    val polygonPoints = mutableListOf<GeoPoint>()
                                     polygon.forEach { point->
                                         val newPoint = GeoPoint(point.last(), if(point.first() > 180.0) 180.0 else point.first())
+
                                         lastPoint?.let {
-                                            perimeterLength += calculateDistance(newPoint,lastPoint!!)
+                                                perimeterLength += calculateDistance(newPoint,lastPoint!!)
+                                                polygonDistance += calculateDistance(newPoint,lastPoint!!)
                                             lastPoint= newPoint
                                         } ?: kotlin.run {
                                             lastPoint= newPoint
                                         }
 
-                                        listOfPoints.add(newPoint)
+                                        polygonPoints.add(newPoint)
                                     }
-                                    val newPolygon = getNewPolygon(listOfPoints)
+                                    val newPolygon =  CustomPolygon(polygonPoints)
                                     multiPolygon.polygons.add(newPolygon)
+                                    if(!polygonList.contains(newPolygon))perimeterLengthAuto += newPolygon.distance / 1000
+                                    else Log.e("Polygon_error", "Polygon same")
+
+                                    polygonList.add(newPolygon)
                                 }
                                 listOfMultiPolygon.add(multiPolygon)
                             }
                             listOfGeoClusters.add(GeoCluster(listOfMultiPolygon, perimeterLength))
+                            Log.e("Polygon", "perimeter: $perimeterLengthAuto")
                         }
 
                         RepoResult.Success(listOfGeoClusters)
@@ -72,19 +80,6 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
         return result
     }
 
-    private fun getNewPolygon(points: MutableList<GeoPoint>): Polygon {
-        val geoPoints = ArrayList<GeoPoint>()
-        val polygon = CustomTapPolygon()
-        points.forEach { geoPoint ->
-            geoPoints.add(geoPoint)
-        }
-        geoPoints.add(geoPoints[0])
-        polygon.fillPaint.color = Color.TRANSPARENT
-        polygon.points = geoPoints
-        polygon.outlinePaint.color = Color.BLUE
-        polygon.outlinePaint.strokeWidth = 5f
-        return polygon
-    }
 
     private fun calculateDistance(newPoint: GeoPoint, lastPoint: GeoPoint): Float {
         val newLocation = Location("")

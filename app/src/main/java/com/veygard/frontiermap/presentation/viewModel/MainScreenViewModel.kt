@@ -13,6 +13,7 @@ import org.osmdroid.views.MapView
 
 class MainScreenViewModel(private val geoRepository: GeoRepository) : ViewModel() {
 
+
     private val _isLoading = MutableLiveData<Boolean?>()
     val isLoading: LiveData<Boolean?>
         get() = _isLoading
