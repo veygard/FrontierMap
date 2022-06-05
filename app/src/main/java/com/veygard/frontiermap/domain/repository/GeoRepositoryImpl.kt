@@ -1,6 +1,7 @@
 package com.veygard.frontiermap.domain.repository
 
 import android.graphics.Color
+import android.location.Location
 import android.util.Log
 import com.veygard.frontiermap.data.GeoApi
 import com.veygard.frontiermap.domain.models.GeoCluster
@@ -11,6 +12,9 @@ import org.osmdroid.views.overlay.Polygon
 
 
 class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
+    private var getRussiaPerimeter = 0.0
+    private var lastLocation: Location? = null
+
     override suspend fun getRussia(): RepoResult {
         var result: RepoResult
 
@@ -21,7 +25,8 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
                 call.isSuccessful -> {
                     call.body()?.let { api->
                         val listOfGeoClusters = mutableListOf<GeoCluster>()
-
+                        var perimeterLength = 0f
+                        var lastPoint: GeoPoint? = null
 
                         api.features.forEach { cluster->
                             val listOfMultiPolygon = mutableListOf<MultiPolygon>()
@@ -30,15 +35,22 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
                                 multi.forEach { polygon ->
                                     val listOfPoints = mutableListOf<GeoPoint>()
                                     polygon.forEach { point->
-                                        val reversePoint = GeoPoint(point.last(), if(point.first() > 180.0) 180.0 else point.first())
-                                        listOfPoints.add(reversePoint)
+                                        val newPoint = GeoPoint(point.last(), if(point.first() > 180.0) 180.0 else point.first())
+                                        lastPoint?.let {
+                                            perimeterLength += calculateDistance(newPoint,lastPoint!!)
+                                            lastPoint= newPoint
+                                        } ?: kotlin.run {
+                                            lastPoint= newPoint
+                                        }
+
+                                        listOfPoints.add(newPoint)
                                     }
                                     val newPolygon = getNewPolygon(listOfPoints)
                                     multiPolygon.polygons.add(newPolygon)
                                 }
                                 listOfMultiPolygon.add(multiPolygon)
                             }
-                            listOfGeoClusters.add(GeoCluster(listOfMultiPolygon))
+                            listOfGeoClusters.add(GeoCluster(listOfMultiPolygon, perimeterLength))
                         }
 
                         RepoResult.Success(listOfGeoClusters)
@@ -72,5 +84,16 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
         polygon.outlinePaint.color = Color.BLUE
         polygon.outlinePaint.strokeWidth = 5f
         return polygon
+    }
+
+    private fun calculateDistance(newPoint: GeoPoint, lastPoint: GeoPoint): Float {
+        val newLocation = Location("")
+        newLocation.latitude = newPoint.latitude
+        newLocation.longitude = newPoint.longitude
+        val lastLocation = Location("")
+        lastLocation.latitude = lastPoint.latitude
+        lastLocation.longitude = lastPoint.longitude
+
+        return newLocation.distanceTo(lastLocation) / 1000
     }
 }
