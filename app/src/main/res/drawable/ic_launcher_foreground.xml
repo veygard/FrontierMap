@@ -1,0 +1,52 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <group android:scaleX="0.14244094"
+      android:scaleY="0.14244094"
+      android:translateX="17.82"
+      android:translateY="17.82">
+      <path
+          android:pathData="M508 254A254 254 0 0 1 0 254A254 254 0 0 1 508 254Z">
+          <aapt:attr
+              name="android:fillColor">
+              <gradient
+                  android:startX="70.02149"
+                  android:startY="18.72779"
+                  android:endX="569.619"
+                  android:endY="637.7178"
+                  android:tileMode="clamp">
+                  <item
+                      android:color="#407BC6"
+                      android:offset="0" />
+                  <item
+                      android:color="#009B00B1"
+                      android:offset="1" />
+              </gradient>
+          </aapt:attr>
+      </path>
+      <path
+          android:pathData="M158 405.2L189.6 239.6 131.2 223.6 75.2 370Z"
+          android:fillColor="#FFFFFF" />
+      <path
+          android:pathData="M158 405.2L189.6 239.6 254 223.6 254 370Z"
+          android:fillColor="#E6E9EE" />
+      <path
+          android:pathData="M350 405.2L318.4 239.6 254 223.6 254 370Z"
+          android:fillColor="#FFFFFF" />
+      <path
+          android:pathData="M350 405.2L318.4 239.6 376.8 223.6 432.8 370Z"
+          android:fillColor="#E6E9EE" />
+      <path
+          android:pathData="M260 170.4c0 46 -83.6 161.2 -83.6 161.2S93.2 216.8 93.2 170.4s37.2 -83.6 83.6 -83.6C222.8 87.2 260 124.4 260 170.4z"
+          android:fillColor="#FF7058" />
+      <path
+          android:pathData="M227.6 169.6A51.2 51.2 0 0 1 125.2 169.6A51.2 51.2 0 0 1 227.6 169.6Z"
+          android:fillColor="#FFFFFF" />
+      <path
+          android:pathData="M202 169.6A25.6 25.6 0 0 1 150.8 169.6A25.6 25.6 0 0 1 202 169.6Z"
+          android:fillColor="#FF7058" />
+  </group>
+</vector>

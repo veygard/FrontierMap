@@ -27,6 +27,7 @@ class CustomPolygon(geoPoints: List<GeoPoint>) : Polygon() {
             textLabelBackgroundColor = Color.TRANSPARENT
             textLabelForegroundColor = Color.DKGRAY
             setTextIcon("P= ${(polygon.distance / 1000).toInt()} km")
+            title= "P= ${(polygon.distance / 1000).toInt()} km"
             position = calculateCenter(polygon.actualPoints)
         }
     }

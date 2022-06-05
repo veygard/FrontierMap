@@ -25,7 +25,7 @@ class MainScreenViewModel(private val geoRepository: GeoRepository) : ViewModel(
     val clusterPerimeter: LiveData<Int?>
         get() = _clusterPerimeter
 
-    fun getRussia(map: MapView, textView: TextView) {
+    fun getRussia(map: MapView) {
         viewModelScope.launch {
             _isLoading.value = true
 

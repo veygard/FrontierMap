@@ -57,7 +57,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getRussia(binding.mapView, binding.perimeterTextView)
+        viewModel.getRussia(binding.mapView)
         observeData()
         initMap()
     }
