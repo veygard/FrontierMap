@@ -1,10 +1,13 @@
 package com.veygard.frontiermap.domain.repository
 
+import android.graphics.Color
 import android.util.Log
 import com.veygard.frontiermap.data.GeoApi
-import com.veygard.frontiermap.domain.models.MultiPolygonRaw
-import com.veygard.frontiermap.domain.models.PointRaw
-import com.veygard.frontiermap.domain.models.PolygonRaw
+import com.veygard.frontiermap.domain.models.GeoCluster
+import com.veygard.frontiermap.domain.models.MultiPolygon
+import com.veygard.frontiermap.presentation.widgets.CustomTapPolygon
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Polygon
 
 
 class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
@@ -17,26 +20,28 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
             result = when {
                 call.isSuccessful -> {
                     call.body()?.let { api->
-                        val listOfMultiPolygon = mutableListOf<MultiPolygonRaw>()
+                        val listOfGeoClusters = mutableListOf<GeoCluster>()
+
 
                         api.features.forEach { cluster->
+                            val listOfMultiPolygon = mutableListOf<MultiPolygon>()
                             cluster.geometry.coordinates.forEach { multi->
-                                val multiPolygon = MultiPolygonRaw(mutableListOf())
+                                val multiPolygon = MultiPolygon(mutableListOf())
                                 multi.forEach { polygon ->
-                                    val listOfPoints = mutableListOf<PointRaw>()
+                                    val listOfPoints = mutableListOf<GeoPoint>()
                                     polygon.forEach { point->
-                                        val reversePoint = PointRaw(if(point.first() > 180.0) 180.0 else point.first(), point.last())
+                                        val reversePoint = GeoPoint(point.last(), if(point.first() > 180.0) 180.0 else point.first())
                                         listOfPoints.add(reversePoint)
                                     }
-                                    val newPolygon = PolygonRaw(listOfPoints)
-                                    multiPolygon.polygonRaws.add(newPolygon)
+                                    val newPolygon = getNewPolygon(listOfPoints)
+                                    multiPolygon.polygons.add(newPolygon)
                                 }
                                 listOfMultiPolygon.add(multiPolygon)
                             }
+                            listOfGeoClusters.add(GeoCluster(listOfMultiPolygon))
                         }
 
-
-                        RepoResult.Success(listOfMultiPolygon)
+                        RepoResult.Success(listOfGeoClusters)
                     } ?: RepoResult.Null
                 }
                 call.code() in 400..499 -> {
@@ -53,5 +58,19 @@ class GeoRepositoryImpl(private val geoApi: GeoApi): GeoRepository {
             result= RepoResult.Exception
         }
         return result
+    }
+
+    private fun getNewPolygon(points: MutableList<GeoPoint>): Polygon {
+        val geoPoints = ArrayList<GeoPoint>()
+        val polygon = CustomTapPolygon()
+        points.forEach { geoPoint ->
+            geoPoints.add(geoPoint)
+        }
+        geoPoints.add(geoPoints[0])
+        polygon.fillPaint.color = Color.TRANSPARENT
+        polygon.points = geoPoints
+        polygon.outlinePaint.color = Color.BLUE
+        polygon.outlinePaint.strokeWidth = 5f
+        return polygon
     }
 }
