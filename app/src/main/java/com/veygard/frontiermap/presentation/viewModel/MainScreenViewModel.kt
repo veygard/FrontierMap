@@ -1,15 +1,15 @@
 package com.veygard.frontiermap.presentation.viewModel
 
-import android.location.Location
+import android.graphics.Color
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.veygard.frontiermap.domain.repository.GeoRepository
 import com.veygard.frontiermap.domain.repository.RepoResult
+import com.veygard.frontiermap.presentation.widgets.CustomPolygon
 import kotlinx.coroutines.launch
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
 class MainScreenViewModel(private val geoRepository: GeoRepository) : ViewModel() {
 
@@ -42,4 +42,5 @@ class MainScreenViewModel(private val geoRepository: GeoRepository) : ViewModel(
             }
         }
     }
+
 }

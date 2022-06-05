@@ -1,5 +1,5 @@
 package com.veygard.frontiermap.domain.models
 
-import org.osmdroid.views.overlay.Polygon
+import com.veygard.frontiermap.presentation.widgets.CustomPolygon
 
-data class MultiPolygon(val polygons: MutableList<Polygon>)
+data class MultiPolygon(val polygons: MutableList<CustomPolygon>)

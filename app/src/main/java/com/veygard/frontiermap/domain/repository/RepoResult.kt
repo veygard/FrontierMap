@@ -4,9 +4,8 @@ import com.veygard.frontiermap.domain.models.GeoCluster
 
 sealed class RepoResult {
     data class Success(val geoClusters: List<GeoCluster>): RepoResult()
-    object Error: RepoResult()
-    object Connection: RepoResult()
-    object Server: RepoResult()
+    object ConnectionError: RepoResult()
+    object ServerError: RepoResult()
     object Else: RepoResult()
     object Exception: RepoResult()
     object Null: RepoResult()
