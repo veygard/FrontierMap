@@ -44,12 +44,20 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 }
             }
         }
+        viewModel.clusterPerimeter.observe(viewLifecycleOwner){ perim ->
+            perim?.let {
+                binding.perimeterTextView.apply {
+                    text = requireContext().getString(R.string.cluster_perimeter_text, perim.toString())
+                    visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getRussia(binding.mapView)
+        viewModel.getRussia(binding.mapView, binding.perimeterTextView)
         observeData()
         initMap()
     }

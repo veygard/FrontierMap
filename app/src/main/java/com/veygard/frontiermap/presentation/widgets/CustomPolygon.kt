@@ -13,13 +13,6 @@ class CustomPolygon(geoPoints: List<GeoPoint>) : Polygon() {
     private var perimeterMarker: Marker? = null
 
     init {
-        points = geoPoints
-        title = "${distance / 1000} km"
-
-
-        subDescription = "${distance / 1000} km"
-        snippet = "${distance / 1000} km"
-
         fillPaint.color = Color.TRANSPARENT
         this.points = geoPoints
         outlinePaint.color = Color.BLUE
@@ -32,8 +25,8 @@ class CustomPolygon(geoPoints: List<GeoPoint>) : Polygon() {
         perimeterMarker = Marker(map)
         perimeterMarker!!.apply {
             textLabelBackgroundColor = Color.TRANSPARENT
-            textLabelForegroundColor = Color.BLUE
-            setTextIcon("${(polygon.distance / 1000).toInt()} km")
+            textLabelForegroundColor = Color.DKGRAY
+            setTextIcon("P= ${(polygon.distance / 1000).toInt()} km")
             position = calculateCenter(polygon.actualPoints)
         }
     }
