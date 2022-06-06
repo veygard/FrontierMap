@@ -5,12 +5,11 @@ buildscript {
         retrofit_version = '2.9.0'
         nav_version = "2.4.1"
         koin_version = "3.2.0"
-        yandex_map_version = "4.1.0-full"
         nav_version = "2.4.2"
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
@@ -19,15 +18,12 @@ buildscript {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        flatDir {
-            dirs 'libs'
-        }
     }
 }
 
 plugins {
-    id 'com.android.application' version '7.1.3' apply false
-    id 'com.android.library' version '7.1.3' apply false
+    id 'com.android.application' version '7.2.1' apply false
+    id 'com.android.library' version '7.2.1' apply false
     id 'org.jetbrains.kotlin.android' version '1.6.21' apply false
 }
 

@@ -18,6 +18,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -41,10 +42,7 @@ android {
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.all {
-            reports {
-                junitXml.enabled = true
-                html.enabled = false
-            }
+            useJUnitPlatform()
         }
     }
 }
@@ -96,6 +94,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
     testImplementation "org.mockito:mockito-core:4.5.1"
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.0.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
 
     implementation "androidx.preference:preference-ktx:1.2.0"
 }
