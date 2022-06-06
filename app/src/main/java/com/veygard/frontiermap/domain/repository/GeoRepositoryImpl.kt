@@ -45,7 +45,9 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
                             listOfGeoClusters.add(GeoCluster(listOfMultiPolygon, clusterPerimeterLength))
                         }
 
-                        GeoRepResult.Success(listOfGeoClusters)
+                        if(listOfGeoClusters.isNotEmpty())GeoRepResult.Success(listOfGeoClusters)
+                        else GeoRepResult.Null
+
                     } ?: GeoRepResult.Null
                 }
                 call.code() in 400..499 -> {
