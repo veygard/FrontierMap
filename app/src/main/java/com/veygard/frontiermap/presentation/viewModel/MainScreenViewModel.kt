@@ -9,13 +9,14 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import com.veygard.frontiermap.domain.repository.GeoRepository
 import com.veygard.frontiermap.domain.repository.RepoResult
+import com.veygard.frontiermap.domain.use_cases.GetRussiaUseCase
 import com.veygard.frontiermap.presentation.widgets.CustomPolygon
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
-class MainScreenViewModel(private val geoRepository: GeoRepository) : ViewModel() {
+class MainScreenViewModel(private val getRussiaUseCase: GetRussiaUseCase) : ViewModel() {
 
     private val _isLoading = MutableLiveData<Boolean?>()
     val isLoading: LiveData<Boolean?>
@@ -29,7 +30,7 @@ class MainScreenViewModel(private val geoRepository: GeoRepository) : ViewModel(
         viewModelScope.launch {
             _isLoading.value = true
 
-            val result = geoRepository.getRussia()
+            val result = getRussiaUseCase.start()
             when (result) {
                 is RepoResult.Success -> {
                     result.geoClusters.forEach { geoCluster ->
