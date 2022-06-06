@@ -18,20 +18,15 @@ import org.osmdroid.views.overlay.Marker
 
 class MainScreenViewModel(private val getRussiaUseCase: GetRussiaUseCase) : ViewModel() {
 
-    private val _isLoading = MutableLiveData<Boolean?>()
-    val isLoading: LiveData<Boolean?>
-        get() = _isLoading
-
-    private val _clusterPerimeter = MutableLiveData<Int?>()
-    val clusterPerimeter: LiveData<Int?>
-        get() = _clusterPerimeter
+    private val _state = MutableLiveData<MainScreenVmState?>()
+    val state: LiveData<MainScreenVmState?>
+        get() = _state
 
     fun getRussia(map: MapView) {
         viewModelScope.launch {
-            _isLoading.value = true
+            _state.value = MainScreenVmState.Loading
 
-            val result = getRussiaUseCase.start()
-            when (result) {
+            when (val result = getRussiaUseCase.start()) {
                 is RepoResult.Success -> {
                     result.geoClusters.forEach { geoCluster ->
                         geoCluster.list.forEach { multiPolygon ->
@@ -44,10 +39,12 @@ class MainScreenViewModel(private val getRussiaUseCase: GetRussiaUseCase) : View
                                 Log.e("Point_exception", "exception $e")
                             }
                         }
-                        _clusterPerimeter.value = geoCluster.perimeterLengthKm
+                        _state.value = MainScreenVmState.StopLoading
+                        _state.value = MainScreenVmState.Success(geoCluster.perimeterLengthKm)
                     }
-                    _isLoading.value = false
                 }
+                is RepoResult.ConnectionError -> _state.value = MainScreenVmState.ConnectionError
+                else -> _state.value = MainScreenVmState.ServerError
             }
         }
     }

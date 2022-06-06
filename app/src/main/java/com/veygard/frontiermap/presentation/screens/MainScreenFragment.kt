@@ -9,6 +9,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.veygard.frontiermap.R
 import com.veygard.frontiermap.databinding.FragmentMainScreenBinding
 import com.veygard.frontiermap.presentation.viewModel.MainScreenViewModel
+import com.veygard.frontiermap.presentation.viewModel.MainScreenVmState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -28,29 +29,36 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun observeData() {
-        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
-            when (loading) {
-                true -> {
+        viewModel.state.observe(viewLifecycleOwner){ result ->
+            when(result){
+                MainScreenVmState.ConnectionError -> {
+
+                }
+                MainScreenVmState.Loading -> {
                     binding.lottie.apply {
                         speed = 1.3f
                         repeatCount = 99
                         playAnimation()
                     }
                 }
-                false -> {
+                MainScreenVmState.StopLoading -> {
                     binding.lottie.cancelAnimation()
                     binding.lottie.visibility = View.GONE
                     binding.mapView.visibility = View.VISIBLE
                 }
-            }
-        }
-        viewModel.clusterPerimeter.observe(viewLifecycleOwner){ perim ->
-            perim?.let {
-                binding.perimeterTextView.apply {
-                    text = requireContext().getString(R.string.cluster_perimeter_text, perim.toString())
-                    visibility = View.VISIBLE
+                MainScreenVmState.ServerError -> {
+
+                }
+                is MainScreenVmState.Success -> {
+                    result.clusterPerimeter?.let { km->
+                        binding.perimeterTextView.apply {
+                            text = requireContext().getString(R.string.cluster_perimeter_text, km.toString())
+                            visibility = View.VISIBLE
+                        }
+                    }
                 }
             }
+
         }
     }
 
