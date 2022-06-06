@@ -9,5 +9,17 @@
             android:id="@+id/mainScreenFragmen"
             android:name="com.veygard.frontiermap.presentation.screens.MainScreenFragment"
             android:label="fragment_main_screen"
-            tools:layout="@layout/fragment_main_screen" />
+            tools:layout="@layout/fragment_main_screen" >
+        <action
+                android:id="@+id/action_mainScreenFragmen_to_errorScreenFragment"
+                app:destination="@id/errorScreenFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/errorScreenFragment"
+            android:name="com.veygard.frontiermap.presentation.screens.ErrorScreenFragment"
+            android:label="ErrorScreenFragment" >
+        <action
+                android:id="@+id/action_errorScreenFragment_to_mainScreenFragmen"
+                app:destination="@id/mainScreenFragmen" />
+    </fragment>
 </navigation>

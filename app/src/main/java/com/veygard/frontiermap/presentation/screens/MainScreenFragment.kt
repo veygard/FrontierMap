@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.veygard.frontiermap.R
 import com.veygard.frontiermap.databinding.FragmentMainScreenBinding
@@ -31,8 +32,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private fun observeData() {
         viewModel.state.observe(viewLifecycleOwner){ result ->
             when(result){
-                MainScreenVmState.ConnectionError -> {
-
+                MainScreenVmState.Error -> {
+                    this.findNavController().navigate(R.id.action_mainScreenFragmen_to_errorScreenFragment)
                 }
                 MainScreenVmState.Loading -> {
                     binding.lottie.apply {
@@ -45,9 +46,6 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                     binding.lottie.cancelAnimation()
                     binding.lottie.visibility = View.GONE
                     binding.mapView.visibility = View.VISIBLE
-                }
-                MainScreenVmState.ServerError -> {
-
                 }
                 is MainScreenVmState.Success -> {
                     result.clusterPerimeter?.let { km->
