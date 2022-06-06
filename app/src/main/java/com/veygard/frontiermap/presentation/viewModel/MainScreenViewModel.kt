@@ -2,7 +2,7 @@ package com.veygard.frontiermap.presentation.viewModel
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.veygard.frontiermap.domain.repository.RepoResult
+import com.veygard.frontiermap.domain.repository.GeoRepResult
 import com.veygard.frontiermap.domain.use_cases.GetRussiaUseCase
 import kotlinx.coroutines.launch
 import org.osmdroid.views.MapView
@@ -18,7 +18,7 @@ class MainScreenViewModel(private val getRussiaUseCase: GetRussiaUseCase) : View
             _state.value = MainScreenVmState.Loading
             val result = getRussiaUseCase.start()
             when (result) {
-                is RepoResult.Success -> {
+                is GeoRepResult.Success -> {
                     result.geoClusters.forEach { geoCluster ->
                         geoCluster.list.forEach { multiPolygon ->
                             try {

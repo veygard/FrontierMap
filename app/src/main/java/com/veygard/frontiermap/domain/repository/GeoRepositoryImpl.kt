@@ -10,9 +10,8 @@ import org.osmdroid.util.GeoPoint
 
 class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
 
-    override suspend fun getRussia(): RepoResult {
-        var result: RepoResult
-
+    override suspend fun getRussia(): GeoRepResult {
+        var result: GeoRepResult
 
         Log.e("test_di", "repository working")
         try {
@@ -46,21 +45,21 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
                             listOfGeoClusters.add(GeoCluster(listOfMultiPolygon, clusterPerimeterLength))
                         }
 
-                        RepoResult.Success(listOfGeoClusters)
-                    } ?: RepoResult.Null
+                        GeoRepResult.Success(listOfGeoClusters)
+                    } ?: GeoRepResult.Null
                 }
                 call.code() in 400..499 -> {
-                    RepoResult.ConnectionError
+                    GeoRepResult.ConnectionError
                 }
                 call.code() in 500..599 -> {
-                    RepoResult.ServerError
+                    GeoRepResult.ServerError
                 }
                 else -> {
-                    RepoResult.Else
+                    GeoRepResult.Else
                 }
             }
         } catch (e: Exception) {
-            result = RepoResult.Exception
+            result = GeoRepResult.Exception
         }
         return result
     }
