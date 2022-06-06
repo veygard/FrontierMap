@@ -24,7 +24,6 @@ class MainScreenViewModel(private val getRussiaUseCase: GetRussiaUseCase) : View
                             try {
                                 multiPolygon.polygons.forEach { polygon ->
                                     map.overlays.add(polygon)
-                                    Log.e("Polygon added", "poly number")
                                 }
                             } catch (e: Exception) {
                                 Log.e("Point_exception", "exception $e")

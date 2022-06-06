@@ -1,15 +1,11 @@
 package com.veygard.frontiermap
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
-import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import org.osmdroid.config.Configuration
 
 
