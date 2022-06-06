@@ -37,7 +37,19 @@ android {
         dataBinding true
         viewBinding true
     }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.all {
+            reports {
+                junitXml.enabled = true
+                html.enabled = false
+            }
+        }
+    }
 }
+
+
 
 dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -79,6 +91,12 @@ dependencies {
     implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.6'
 
     implementation 'com.airbnb.android:lottie:4.2.2'
+
+    //testing
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
+    testImplementation "org.mockito:mockito-core:4.5.1"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:4.0.0"
+
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
