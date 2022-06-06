@@ -68,6 +68,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             controller.setZoom(4.5)
             setMultiTouchControls(true)
             controller.setCenter(GeoPoint(55.558741, 37.378847 ))
+            isVerticalMapRepetitionEnabled = false
+            setScrollableAreaLimitLatitude(MapView.getTileSystem().maxLatitude, MapView.getTileSystem().minLatitude, 0)
+            isHorizontalMapRepetitionEnabled = true
+//            setScrollableAreaLimitLongitude(MapView.getTileSystem().minLongitude, MapView.getTileSystem().maxLongitude, 0)
         }
     }
 
