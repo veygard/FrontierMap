@@ -13,7 +13,6 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
     override suspend fun getRussia(): GeoRepResult {
         var result: GeoRepResult
 
-        Log.e("test_di", "repository working")
         try {
             val call = geoApi.getRussiaApi()
             result = when {
@@ -61,7 +60,7 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
                 }
             }
         } catch (e: Exception) {
-            result = GeoRepResult.Exception
+             result = GeoRepResult.Exception
         }
         return result
     }

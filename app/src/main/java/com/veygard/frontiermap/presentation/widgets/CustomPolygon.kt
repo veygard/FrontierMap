@@ -15,7 +15,7 @@ class CustomPolygon(geoPoints: List<GeoPoint>) : Polygon() {
     init {
         fillPaint.color = Color.TRANSPARENT
         this.points = geoPoints
-        outlinePaint.color = Color.BLUE
+        outlinePaint.color = Color.parseColor("#3F51B5")
         outlinePaint.strokeWidth = 5f
     }
 
