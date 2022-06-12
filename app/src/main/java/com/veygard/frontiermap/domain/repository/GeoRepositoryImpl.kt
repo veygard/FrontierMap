@@ -1,10 +1,9 @@
 package com.veygard.frontiermap.domain.repository
 
-import android.util.Log
 import com.veygard.frontiermap.data.GeoApi
 import com.veygard.frontiermap.domain.models.GeoCluster
 import com.veygard.frontiermap.domain.models.MultiPolygon
-import com.veygard.frontiermap.presentation.widgets.CustomPolygon
+import com.veygard.frontiermap.domain.models.PolygonWith180LongitudeInfo
 import org.osmdroid.util.GeoPoint
 
 
@@ -28,23 +27,51 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
                                 val multiPolygon = MultiPolygon(mutableListOf())
                                 multi.forEach { polygon ->
                                     val polygonPoints = mutableListOf<GeoPoint>()
+                                    var isHave180GeoPoint = false
+                                    var lowerLatitudePoint: Double? = null
+                                    var higherLatitudePoint: Double? = null
+
+
                                     polygon.forEach { point ->
                                         val newPoint = GeoPoint(
                                             point.last(),
-                                            if (point.first() > 180.0) 180.0 else point.first()
+                                            if (point.first() > 180.0) {
+                                                180.0
+                                            }
+                                            else point.first()
                                         )
+                                        if (newPoint.longitude <= 180.0) {
+                                            isHave180GeoPoint = true
+                                        }
+
+                                        //запоминаем высшую и низшую точки полигона
+                                        if (lowerLatitudePoint == null || (lowerLatitudePoint != null && lowerLatitudePoint!! > point.last())) lowerLatitudePoint =
+                                            point.last()
+                                        if (higherLatitudePoint == null || (higherLatitudePoint != null && higherLatitudePoint!! < point.last())) higherLatitudePoint =
+                                            point.last()
+
                                         polygonPoints.add(newPoint)
                                     }
-                                    val newPolygon = CustomPolygon(polygonPoints)
-                                    clusterPerimeterLength += (newPolygon.distance/1000).toInt()
+                                    val newPolygon = PolygonWith180LongitudeInfo(
+                                        polygonPoints,
+                                        isHave180GeoPoint,
+                                        lowerLatitudePoint,
+                                        higherLatitudePoint
+                                    )
+                                    clusterPerimeterLength += (newPolygon.distance / 1000).toInt()
                                     multiPolygon.polygons.add(newPolygon)
                                 }
                                 listOfMultiPolygon.add(multiPolygon)
                             }
-                            listOfGeoClusters.add(GeoCluster(listOfMultiPolygon, clusterPerimeterLength))
+                            listOfGeoClusters.add(
+                                GeoCluster(
+                                    listOfMultiPolygon,
+                                    clusterPerimeterLength
+                                )
+                            )
                         }
 
-                        if(listOfGeoClusters.isNotEmpty())GeoRepResult.Success(listOfGeoClusters)
+                        if (listOfGeoClusters.isNotEmpty()) GeoRepResult.Success(listOfGeoClusters)
                         else GeoRepResult.Null
 
                     } ?: GeoRepResult.Null
@@ -60,7 +87,7 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
                 }
             }
         } catch (e: Exception) {
-             result = GeoRepResult.Exception
+            result = GeoRepResult.Exception
         }
         return result
     }

@@ -3,17 +3,13 @@ package com.veygard.frontiermap.domain.repository
 import com.google.gson.Gson
 import com.veygard.frontiermap.data.GeoApi
 import com.veygard.frontiermap.data.model.GeoApiResponse
-import com.veygard.frontiermap.presentation.widgets.CustomPolygon
 import kotlinx.coroutines.runBlocking
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.osmdroid.views.overlay.Polygon
 import retrofit2.Response
 
 

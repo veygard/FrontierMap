@@ -2,14 +2,15 @@ package com.veygard.frontiermap.presentation.widgets
 
 import android.graphics.Color
 import android.view.MotionEvent
-import org.osmdroid.tileprovider.tilesource.XYTileSource
+import com.veygard.frontiermap.domain.models.PolygonWith180LongitudeInfo
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
 
+fun  PolygonWith180LongitudeInfo.toClickPolygon() = CustomClickPolygon(this.actualPoints)
 
-class CustomPolygon(geoPoints: List<GeoPoint>) : Polygon() {
+class CustomClickPolygon(geoPoints: List<GeoPoint>) : Polygon() {
     private var perimeterMarker: Marker? = null
 
     init {
@@ -21,7 +22,7 @@ class CustomPolygon(geoPoints: List<GeoPoint>) : Polygon() {
 
     var isChecked = false
 
-    private fun showPolygonPerimeterMarkers(polygon: CustomPolygon, map: MapView) {
+    private fun showPolygonPerimeterMarkers(polygon: CustomClickPolygon, map: MapView) {
         perimeterMarker = Marker(map)
         perimeterMarker!!.apply {
             textLabelBackgroundColor = Color.TRANSPARENT
