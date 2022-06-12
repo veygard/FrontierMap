@@ -40,15 +40,15 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
                                             }
                                             else point.first()
                                         )
-                                        if (newPoint.longitude <= 180.0) {
+                                        if (newPoint.longitude >= 180.0 || newPoint.longitude <= -179.0) {
                                             isHave180GeoPoint = true
+                                            //запоминаем высшую и низшую точки полигона у точек меридиана 180
+                                            if (lowerLatitudePoint == null || (lowerLatitudePoint != null && lowerLatitudePoint!! > newPoint.latitude)) lowerLatitudePoint =
+                                                newPoint.latitude
+                                            if (higherLatitudePoint == null || (higherLatitudePoint != null && higherLatitudePoint!! < newPoint.latitude)) higherLatitudePoint =
+                                                newPoint.latitude
                                         }
 
-                                        //запоминаем высшую и низшую точки полигона
-                                        if (lowerLatitudePoint == null || (lowerLatitudePoint != null && lowerLatitudePoint!! > point.last())) lowerLatitudePoint =
-                                            point.last()
-                                        if (higherLatitudePoint == null || (higherLatitudePoint != null && higherLatitudePoint!! < point.last())) higherLatitudePoint =
-                                            point.last()
 
                                         polygonPoints.add(newPoint)
                                     }
