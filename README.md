@@ -11,3 +11,7 @@
 
 
 ![result-2](https://user-images.githubusercontent.com/79571688/172390917-78bf2f6c-96b5-4997-ab39-57833aa7f1a2.gif)
+
+Сделано объединение полигонов по 180 меридиану (если geojson приходит с таким разделением):
+
+![mergePoly](https://user-images.githubusercontent.com/79571688/173332157-38c9505f-7b6f-43b5-be10-e1edcff8c43b.png)
