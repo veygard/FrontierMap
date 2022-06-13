@@ -7,8 +7,8 @@ import org.osmdroid.views.overlay.Polygon
 data class PolygonWith180LongitudeInfo(
     val geoPoints: List<GeoPoint>,
     val isHave180GeoPoints: Boolean,
-    val lower180LatitudePoint: Double? = null,
-    val higher180LatitudePoint: Double? = null
+    val lower180LatitudePoint: GeoPoint? = null,
+    val higher180LatitudePoint: GeoPoint? = null
 ): Polygon() {
     init {
         this.points = geoPoints

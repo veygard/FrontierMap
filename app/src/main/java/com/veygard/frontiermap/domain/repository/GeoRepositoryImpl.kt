@@ -28,8 +28,8 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
                                 multi.forEach { polygon ->
                                     val polygonPoints = mutableListOf<GeoPoint>()
                                     var isHave180GeoPoint = false
-                                    var lowerLatitudePoint: Double? = null
-                                    var higherLatitudePoint: Double? = null
+                                    var lowerLatitudePoint: GeoPoint? = null
+                                    var higherLatitudePoint: GeoPoint? = null
 
 
                                     polygon.forEach { point ->
@@ -37,16 +37,15 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
                                             point.last(),
                                             if (point.first() > 180.0) {
                                                 180.0
-                                            }
-                                            else point.first()
+                                            } else point.first()
                                         )
-                                        if (newPoint.longitude >= 180.0 || newPoint.longitude <= -179.0) {
+                                        if (newPoint.longitude >= 180.0 || newPoint.longitude <= -179.99999) {
                                             isHave180GeoPoint = true
                                             //запоминаем высшую и низшую точки полигона у точек меридиана 180
-                                            if (lowerLatitudePoint == null || (lowerLatitudePoint != null && lowerLatitudePoint!! > newPoint.latitude)) lowerLatitudePoint =
-                                                newPoint.latitude
-                                            if (higherLatitudePoint == null || (higherLatitudePoint != null && higherLatitudePoint!! < newPoint.latitude)) higherLatitudePoint =
-                                                newPoint.latitude
+                                            if (lowerLatitudePoint == null || (lowerLatitudePoint != null && lowerLatitudePoint!!.latitude > newPoint.latitude))
+                                                lowerLatitudePoint = newPoint
+                                            if (higherLatitudePoint == null || (higherLatitudePoint != null && higherLatitudePoint!!.latitude < newPoint.latitude))
+                                                higherLatitudePoint = newPoint
                                         }
 
 
