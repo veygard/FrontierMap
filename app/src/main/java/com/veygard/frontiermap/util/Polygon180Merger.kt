@@ -1,5 +1,6 @@
 package com.veygard.frontiermap.util
 
+import android.util.Log
 import com.veygard.frontiermap.domain.models.MultiPolygon
 import com.veygard.frontiermap.domain.models.PolygonWith180LongitudeInfo
 import com.veygard.frontiermap.presentation.widgets.CustomClickPolygon
@@ -30,79 +31,79 @@ object Polygon180Merger {
     }
 
 
-    fun separatePolygon180() {
-        val below70List = mutableListOf<PolygonWith180LongitudeInfo>()
-        val upper70List = mutableListOf<PolygonWith180LongitudeInfo>()
+    fun prepareUncommittedPolygonsByAverageLatitude() {
+
+        //получаем сет средней широты у полигонов
+        val setOfLatitudeAverage = mutableSetOf<Int>()
         uncompletedPolygons.forEach {
-            if (it.lower180LatitudePoint != null && it.lower180LatitudePoint.latitude >= 70.0 || it.higher180LatitudePoint != null && it.higher180LatitudePoint.latitude >= 70.0) {
-                upper70List.add(it)
-            }
-            if (it.lower180LatitudePoint != null && it.lower180LatitudePoint.latitude < 70.0 || it.higher180LatitudePoint != null && it.higher180LatitudePoint.latitude < 70.0) {
-                below70List.add(it)
+            it.average180Latitude?.let { setOfLatitudeAverage.add(it)}
+        }
+
+        //делаем карту, и добавляем туда пока пустые списки полигонов
+        val polygons = mutableMapOf<Int, MutableList<PolygonWith180LongitudeInfo>>()
+        setOfLatitudeAverage.forEach{
+            polygons[it] = mutableListOf()
+        }
+
+        //проходимся по полигонам и добавляем в карту
+        uncompletedPolygons.forEach { poly->
+            setOfLatitudeAverage.forEach{ average ->
+                if (poly.lower180LatitudePoint != null && poly.average180Latitude == average) {
+                    polygons[average]?.add(poly)
+                }
             }
         }
-        combinePolygon180(below70List)
-        combinePolygon180(upper70List)
-    }
 
-    fun separatePolygon180ForAll() {
-        val polygons = mutableListOf<List<PolygonWith180LongitudeInfo>>()
-
-        val below70List = mutableListOf<PolygonWith180LongitudeInfo>()
-        val upper70List = mutableListOf<PolygonWith180LongitudeInfo>()
-
-        uncompletedPolygons.forEach {
-            if (it.lower180LatitudePoint != null && it.lower180LatitudePoint.latitude >= 70.0 || it.higher180LatitudePoint != null && it.higher180LatitudePoint.latitude >= 70.0) {
-                upper70List.add(it)
-            }
-            if (it.lower180LatitudePoint != null && it.lower180LatitudePoint.latitude < 70.0 || it.higher180LatitudePoint != null && it.higher180LatitudePoint.latitude < 70.0) {
-                below70List.add(it)
-            }
+        //склеиваем полигоны
+        polygons.forEach{
+            combinePolygon180(it.value)
         }
-        combinePolygon180(below70List)
-        combinePolygon180(upper70List)
     }
 
     private fun combinePolygon180(polygons: MutableList<PolygonWith180LongitudeInfo>) {
-        //определяем в каком из полигонов 180 точки
-        val originalList = when {
-            polygons[0].actualPoints.any { it.longitude == 180.0 }  -> polygons[0]
-            polygons[1].actualPoints.any { it.longitude == 180.0 }  -> polygons[1]
-            else -> null
-        }
-
-        //список, где точки -180 будем присоединять к оригиналу
-        val donorList = when {
-            polygons[0].actualPoints.any { it.longitude <= -179.9 }  -> polygons[0]
-            polygons[1].actualPoints.any { it.longitude <= -179.9 }  -> polygons[1]
-            else -> null
-        }
-
-        //удаляем 180 точки кроме верхней и нижней
-        val originalNo180PointsList = mutableListOf<GeoPoint>()
-        originalList?.actualPoints?.forEach { point ->
-            when {
-                point.equal(originalList.higher180LatitudePoint) || point.equal(originalList.lower180LatitudePoint) -> originalNo180PointsList.add(point)
-                point.longitude != 180.0 -> originalNo180PointsList.add(point)
+        try {
+            //определяем в каком из полигонов 180 точки
+            val originalList = when {
+                polygons[0].actualPoints.any { it.longitude == 180.0 }  -> polygons[0]
+                polygons[1].actualPoints.any { it.longitude == 180.0 }  -> polygons[1]
+                else -> null
             }
-        }
 
-        //определяем индекс верхней точки 180 - туда будем вставлять донора
-        val maxLatitudeIndex = originalNo180PointsList.indexOf(originalList?.higher180LatitudePoint)
-
-        //удаляем -180 точки кроме верхней и нижней у донора
-        val donorNoMinus180PointsList = mutableListOf<GeoPoint>()
-        donorList?.actualPoints?.forEach { point ->
-            when {
-                point.equal(donorList.higher180LatitudePoint) || point.equal(donorList.lower180LatitudePoint) -> donorNoMinus180PointsList.add(point)
-                point.longitude >= -179.9 -> donorNoMinus180PointsList.add(point)
+            //список, где точки -180 будем присоединять к оригиналу
+            val donorList = when {
+                polygons[0].actualPoints.any { it.longitude <= -179.9 }  -> polygons[0]
+                polygons[1].actualPoints.any { it.longitude <= -179.9 }  -> polygons[1]
+                else -> null
             }
+
+            //удаляем 180 точки кроме верхней и нижней
+            val originalNo180PointsList = mutableListOf<GeoPoint>()
+            originalList?.actualPoints?.forEach { point ->
+                when {
+                    point.equal(originalList.higher180LatitudePoint) || point.equal(originalList.lower180LatitudePoint) -> originalNo180PointsList.add(point)
+                    point.longitude != 180.0 -> originalNo180PointsList.add(point)
+                }
+            }
+
+            //определяем индекс верхней точки 180 - туда будем вставлять донора
+            val maxLatitudeIndex = originalNo180PointsList.indexOf(originalList?.higher180LatitudePoint)
+
+            //удаляем -180 точки кроме верхней и нижней у донора
+            val donorNoMinus180PointsList = mutableListOf<GeoPoint>()
+            donorList?.actualPoints?.forEach { point ->
+                when {
+                    point.equal(donorList.higher180LatitudePoint) || point.equal(donorList.lower180LatitudePoint) -> donorNoMinus180PointsList.add(point)
+                    point.longitude >= -179.9 -> donorNoMinus180PointsList.add(point)
+                }
+            }
+
+            val donorSorted = sortPointsListByFirst(donorNoMinus180PointsList, donorList?.higher180LatitudePoint)
+            originalNo180PointsList.addAll(maxLatitudeIndex+1,donorSorted)
+
+            preparedPolygonsList.add(CustomClickPolygon(originalNo180PointsList))
+        } catch (e: Exception){
+            Log.e("combinePolygon180 exception", "Something wrong with  Polygon180Merger.combinePolygon180: $e")
         }
-
-        val donorSorted = sortPointsListByFirst(donorNoMinus180PointsList, donorList?.higher180LatitudePoint)
-        originalNo180PointsList.addAll(maxLatitudeIndex+1,donorSorted)
-
-        preparedPolygonsList.add(CustomClickPolygon(originalNo180PointsList))
     }
 
     private fun sortPointsListByFirst(originalList: List<GeoPoint>, fistPoint: GeoPoint?): List<GeoPoint> {
@@ -114,6 +115,7 @@ object Polygon180Merger {
             val partTwo = originalList.subList(0,firstPointIndex)
             partOne + partTwo
         } catch (e : Exception){
+            Log.e("sortPointsListByFirst exception", "Something wrong with  Polygon180Merger.sortPointsListByFirst: $e")
             emptyList()
         }
     }

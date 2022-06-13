@@ -5,6 +5,7 @@ import com.veygard.frontiermap.domain.models.GeoCluster
 import com.veygard.frontiermap.domain.models.MultiPolygon
 import com.veygard.frontiermap.domain.models.PolygonWith180LongitudeInfo
 import org.osmdroid.util.GeoPoint
+import kotlin.math.roundToInt
 
 
 class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
@@ -51,11 +52,20 @@ class GeoRepositoryImpl(private val geoApi: GeoApi) : GeoRepository {
 
                                         polygonPoints.add(newPoint)
                                     }
+
+                                    var averageLatitude: Int? = null
+                                    higherLatitudePoint?.let { high ->
+                                        lowerLatitudePoint?.let { low ->
+                                            averageLatitude= ((high.latitude).roundToInt() + (low.latitude).roundToInt())/2
+                                        }
+                                    }
+
                                     val newPolygon = PolygonWith180LongitudeInfo(
                                         polygonPoints,
                                         isHave180GeoPoint,
                                         lowerLatitudePoint,
-                                        higherLatitudePoint
+                                        higherLatitudePoint,
+                                        average180Latitude = averageLatitude
                                     )
                                     clusterPerimeterLength += (newPolygon.distance / 1000).toInt()
                                     multiPolygon.polygons.add(newPolygon)
